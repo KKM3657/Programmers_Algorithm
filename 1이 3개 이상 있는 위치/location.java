@@ -17,7 +17,7 @@ public class Main {
         StringTokenizer st;
 
         int[] dx = new int[]{1, 0, -1, 0};  
-		int[] dy = new int[]{0, -1, 0, 1};
+	int[] dy = new int[]{0, -1, 0, 1};
 		
         n = Integer.parseInt(br.readLine());
 
