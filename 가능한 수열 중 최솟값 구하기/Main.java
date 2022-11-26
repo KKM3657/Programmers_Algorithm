@@ -1,57 +1,52 @@
 import java.util.Scanner;
-import java.util.ArrayList;
+import java.util.LinkedList;
 
 public class Main {
-    public static final int NUM_LEN = 3;
-    
-    public static int n;
-    public static ArrayList<Integer> series = new ArrayList<>();
-    public static int[] numbers = new int[]{4, 5, 6};
-    
-    public static boolean isEqual(int start1, int end1, int start2, int end2) {
-        for(int i = 0; i <= end1 - start1; i++) {
-            if(series.get(start1 + i) != series.get(start2 + i))
-                return false;
-        }
-        return true;
-    }
-    
-    public static boolean isPossibleSeries() {
+    static int n;
+    static int[] number = new int[]{4,5,6}; // 숫자 배열
+    static StringBuilder sb = new StringBuilder();  // 문자열
+    // 가능한 수열인지 판별
+    public static boolean is_possible(){
         int len = 1;
-        while(true) {
-            int end1 = series.size() - 1, start1 = end1 - len + 1;
+        while(true){
+            // 시작과 끝점1
+            int end1 = sb.length() - 1, start1 = end1 - len + 1;
+            // 시작과 끝점2
             int end2 = start1 - 1, start2 = end2 - len + 1;
-    
+            
+            // 범위를 넘기는 경우 넘어감
             if(start2 < 0)
                 break;
-    
-            if(isEqual(start1, end1, start2, end2))
+            
+            // 문자 비교를 위한 문자열 생성
+            String st1 = sb.substring(start1, end1 + 1);
+            String st2 = sb.substring(start2, end2 + 1);
+            
+            if(st1.equals(st2)){
                 return false;
-    
+            }
             len++;
         }
         return true;
     }
-    
-    public static void findMinSeries(int cnt) {
-        if(cnt == n) {
-            for(int i = 0; i < series.size(); i++)
-                System.out.print(series.get(i));
+    public static void solution(int curr){
+        // 끝점인 경우
+        if(curr == n){
+            System.out.println(sb.toString());
             System.exit(0);
-        }    
-        for(int i = 0; i < NUM_LEN; i++) {
-            series.add(numbers[i]);
-            if(isPossibleSeries())
-                findMinSeries(cnt + 1);
-            
-            series.remove(series.size() - 1);
+        }
+        // 4,5,6이 들어가서 가능한 수열인지 판별
+        for(int i=0; i<3; i++){
+            sb.append(number[i]);
+            // 가능한 수열이면 계속 진행 아니면 넘어감
+            if(is_possible())
+                solution(curr+1);
+            sb.deleteCharAt(sb.length()-1);
         }
     }
-
-    public static void main(String[] args) {
+    public static void main(String[] args){
         Scanner sc = new Scanner(System.in);
         n = sc.nextInt();
-
-        findMinSeries(0);
+        solution(0); 
     }
 }
