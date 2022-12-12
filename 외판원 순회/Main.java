@@ -1,65 +1,54 @@
-import java.util.Scanner;
-import java.util.ArrayList;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.StringTokenizer;
 
 public class Main {
-    public static final int INT_MAX = Integer.MAX_VALUE;
-    public static final int MAX_N = 10;
-    
-    // 변수 선언
-    public static int n;
-    public static int[][] cost = new int[MAX_N][MAX_N];
-    public static boolean[] visited = new boolean[MAX_N];
-    public static ArrayList<Integer> picked = new ArrayList<>();
-    
-    public static int ans = INT_MAX;
+    static int n, answer = Integer.MAX_VALUE;
+    static int array[][];
+    static boolean visited[];
 
-    public static void findMin(int cnt) {
-        // 모든 지점를 방문했을 때 가능한 지금까지의 비용 합 중 최솟값을 갱신
-        if(cnt == n) {
-            int totalCost = 0;
-            for(int i = 0; i < picked.size() - 1; i++) {
-                int currCost = cost[picked.get(i)][picked.get(i + 1)];
-                // 비용이 0이라면 불가능한 경우
-                if(currCost == 0)
-                    return;   
-                totalCost += currCost;
-            }
-            // 1번 지점으로 다시 돌아옴
-            int lastPos = picked.get(picked.size() - 1);
-            int additionalCost = cost[lastPos][0];
-            if(additionalCost == 0)
+    public static void find_answer(int cnt, int prev, int value){
+        // 모든 정점을 방문한 경우
+        if(cnt == n){
+            // 돌아가는 길이 0이면 정답이 될수 없음
+            if(array[prev][0] == 0)
                 return;
-            ans = Math.min(ans, totalCost + additionalCost);
+            // 돌아가는 길 더하기
+            int total = value + array[prev][0];
+            // 갱신
+            if(total < answer)
+                answer = total;
             return;
         }
-    
-        // 방문할 지점을 선택합니다.
-        for(int i = 0; i < n; i++) {
-            if(visited[i]) continue;
+        // 방문하기
+        for(int i=1; i<n; i++){
+            if(visited[i] || array[prev][i] == 0)
+                continue;
             visited[i] = true;
-            picked.add(i);
-    
-            findMin(cnt + 1);
-    
+            find_answer(cnt+1, i, value+array[prev][i]);
+
             visited[i] = false;
-            picked.remove(picked.size() - 1);
         }
     }
+    public static void main(String[] args) throws IOException {
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        StringTokenizer st = new StringTokenizer(br.readLine());
 
-    public static void main(String[] args) {
-        Scanner sc = new Scanner(System.in);
-        // 입력:
-        n = sc.nextInt();
+        n = Integer.parseInt(st.nextToken());
+        array = new int[n][n];
+        visited = new boolean[n];
 
-        for(int i = 0; i < n; i++)
-            for(int j = 0; j < n; j++)
-                cost[i][j] = sc.nextInt();
-
-        // 탐색을 진행합니다.
+        for(int i=0; i<n; i++){
+            st = new StringTokenizer(br.readLine());
+            for(int j=0; j<n; j++){
+                array[i][j] = Integer.parseInt(st.nextToken());
+            }
+        }
+        //1번 노드 방문
         visited[0] = true;
-        picked.add(0);
-        findMin(1);
+        find_answer(1, 0, 0);
 
-        System.out.print(ans);
+        System.out.println(answer);
     }
 }
